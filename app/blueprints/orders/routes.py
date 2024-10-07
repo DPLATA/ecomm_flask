@@ -52,7 +52,6 @@ def create_checkout_session():
 @bp.route('/success')
 def success():
     order_number = generate_order_number()
-    shipping_info = session.get('shipping_info', {})
     product_id = session.get('product_id')
     user_id = session.get('user_id')
 
@@ -73,11 +72,10 @@ def success():
                 return "Product not found", 404
 
             # Create a new order
-            shipping_address = f"{shipping_info.get('address')}, {shipping_info.get('city')}, {shipping_info.get('country')}, {shipping_info.get('zip_code')}"
             cursor.execute("""
-                INSERT INTO orders (user_id, status, total_price, shipping_address)
-                VALUES (%s, %s, %s, %s)
-            """, (user_id, 'Completed', product['price'], shipping_address))
+                INSERT INTO orders (user_id, status, total_price)
+                VALUES (%s, %s, %s)
+            """, (user_id, 'Completed', product['price']))
             order_id = cursor.lastrowid
 
             # Add order item
@@ -91,11 +89,9 @@ def success():
             connection.close()
 
             # Clear session data
-            session.pop('shipping_info', None)
             session.pop('product_id', None)
 
-            return render_template('order_details.html', order_number=order_number, product=product,
-                                   shipping_info=shipping_info)
+            return render_template('order_details.html', order_number=order_number, product=product)
         except Error as e:
             print(f"Error: {e}")
             return "An error occurred", 500

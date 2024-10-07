@@ -1,8 +1,7 @@
 {% extends "base.html" %}
-
 {% block title %}Dashboard{% endblock %}
-
 {% block content %}
+
 <h1 class="text-center mb-2">Welcome, {{ session.username }}!</h1>
 
 <h2>Your Orders</h2>
@@ -16,11 +15,15 @@
                 <p>Total: ${{ "%.2f"|format(order.total_price) }}</p>
                 <p>Status: {{ order.status }}</p>
                 <p>Product: {{ order.product_name }} (Quantity: {{ order.quantity }})</p>
-                <p>Shipping Address: {{ order.shipping_address }}</p>
             </div>
         {% endfor %}
     </div>
 {% else %}
     <p>You haven't placed any orders yet.</p>
 {% endif %}
+
+<div class="mt-4">
+    <a href="{{ url_for('main.product_list') }}" class="cta-button">Browse Products</a>
+</div>
+
 {% endblock %}

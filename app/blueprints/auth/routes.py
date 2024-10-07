@@ -101,7 +101,7 @@ def dashboard():
         try:
             cursor = connection.cursor(dictionary=True)
             cursor.execute("""
-                SELECT o.id, o.status, o.total_price, o.shipping_address, o.created_at,
+                SELECT o.id, o.status, o.total_price, o.created_at,
                        p.name as product_name, oi.quantity
                 FROM orders o
                 JOIN order_items oi ON o.id = oi.order_id
