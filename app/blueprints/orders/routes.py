@@ -4,8 +4,10 @@ from app.db import get_db_connection
 from app.extensions import stripe
 from app.utils.unique_ids import generate_order_number
 from mysql.connector import Error
+from app.blueprints.auth.routes import login_required
 
 @bp.route('/create-checkout-session', methods=['GET'])
+@login_required
 def create_checkout_session():
     product_id = session.get('product_id')
     if not product_id:
