@@ -1,18 +1,14 @@
-from flask import render_template, redirect, url_for, session
+from flask import render_template, redirect, url_for, session, flash
 from app.blueprints.orders import bp
 from app.db import get_db_connection
 from app.extensions import stripe
 from app.utils.unique_ids import generate_order_number
 from mysql.connector import Error
 
-SAMPLE_USER_ID = 1  # This is the ID of our sample user
-
-
 @bp.route('/create-checkout-session', methods=['GET'])
 def create_checkout_session():
     product_id = session.get('product_id')
     if not product_id:
-        # If there's no product_id in the session, redirect to the product list
         return redirect(url_for('main.product_list'))
 
     connection = get_db_connection()
@@ -25,7 +21,6 @@ def create_checkout_session():
             connection.close()
 
             if not product:
-                # If the product doesn't exist, redirect to the product list
                 return redirect(url_for('main.product_list'))
 
             checkout_session = stripe.checkout.Session.create(
@@ -54,12 +49,16 @@ def create_checkout_session():
     else:
         return "Database connection failed", 500
 
-
 @bp.route('/success')
 def success():
     order_number = generate_order_number()
     shipping_info = session.get('shipping_info', {})
     product_id = session.get('product_id')
+    user_id = session.get('user_id')
+
+    if not user_id:
+        flash('You must be logged in to complete an order.')
+        return redirect(url_for('auth.login'))
 
     connection = get_db_connection()
     if connection:
@@ -78,7 +77,7 @@ def success():
             cursor.execute("""
                 INSERT INTO orders (user_id, status, total_price, shipping_address)
                 VALUES (%s, %s, %s, %s)
-            """, (SAMPLE_USER_ID, 'Completed', product['price'], shipping_address))
+            """, (user_id, 'Completed', product['price'], shipping_address))
             order_id = cursor.lastrowid
 
             # Add order item

@@ -14,7 +14,6 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -54,7 +53,6 @@ def register():
 
     return render_template('register.html')
 
-
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -93,7 +91,6 @@ def logout():
     session.pop('username', None)
     flash('You have been logged out.')
     return redirect(url_for('main.index'))
-
 
 @bp.route('/dashboard')
 @login_required
