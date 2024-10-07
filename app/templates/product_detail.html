@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="product-detail">
+    <div class="product-info">
+        <h1>{{ product.name }}</h1>
+        <p>{{ product.description }}</p>
+        <p class="price">${{ "%.2f"|format(product.price) }}</p>
+        <p>Category: {{ product.category_name }}</p>
+        <a href="{{ url_for('main.shipping', product_id=product.id) }}" class="cta-button">Buy Now</a>
+    </div>
+</div>
+{% endblock %}

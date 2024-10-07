@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Order Details{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-2">Order Details</h1>
+
+<div class="order-info">
+    <h2>Thank you for your purchase!</h2>
+    <p><strong>Order Number:</strong> {{ order_number }}</p>
+    <p><strong>Product:</strong> {{ product.name }}</p>
+    <p><strong>Price:</strong> ${{ "%.2f"|format(product.price) }}</p>
+</div>
+
+<div class="shipping-info">
+    <h2>Shipping Information</h2>
+    <p><strong>Name:</strong> {{ shipping_info.name }}</p>
+    <p><strong>Address:</strong> {{ shipping_info.address }}</p>
+    <p><strong>City:</strong> {{ shipping_info.city }}</p>
+    <p><strong>Country:</strong> {{ shipping_info.country }}</p>
+    <p><strong>ZIP Code:</strong> {{ shipping_info.zip_code }}</p>
+</div>
+
+<div class="continue-shopping">
+    <a href="{{ url_for('main.product_list') }}" class="cta-button">Continue Shopping</a>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to Our Label Shop{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <h1>Welcome to Our Label Shop</h1>
+        <p>Find the perfect labels for all your needs</p>
+        <a href="{{ url_for('main.product_list') }}" class="cta-button">Shop Now</a>
+    </div>
+</section>
+
+<section class="product-gallery">
+    <div class="container">
+        <h2 class="text-center mb-2">Our Products</h2>
+        <div class="gallery-container">
+            {% for category in categories %}
+            <div class="product-category">
+                <h3>{{ category.name }}</h3>
+                <a href="{{ url_for('main.product_list', category_id=category.id) }}" class="cta-button">View Products</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

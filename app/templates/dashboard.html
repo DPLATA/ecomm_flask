@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-2">Welcome, {{ session.username }}!</h1>
+
+<h2>Your Orders</h2>
+
+{% if orders %}
+    <div class="order-list">
+        {% for order in orders %}
+            <div class="order-item">
+                <h3>Order #{{ order.id }}</h3>
+                <p>Date: {{ order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                <p>Total: ${{ "%.2f"|format(order.total_price) }}</p>
+                <p>Status: {{ order.status }}</p>
+                <p>Product: {{ order.product_name }} (Quantity: {{ order.quantity }})</p>
+                <p>Shipping Address: {{ order.shipping_address }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>You haven't placed any orders yet.</p>
+{% endif %}
+{% endblock %}
