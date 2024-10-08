@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">
+{% endblock %}
+
+{% block content %}
+<h1>Your Shopping Cart</h1>
+
+{% if cart_items %}
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td data-label="Product">
+                    <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" class="cart-item-image">
+                    {{ item.product.name }}
+                </td>
+                <td data-label="Price">${{ "%.2f"|format(item.product.price) }}</td>
+                <td data-label="Quantity">
+                    <form action="{{ url_for('cart.update_cart', product_id=item.product.id) }}" method="post" class="cart-quantity-form">
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" required class="cart-quantity-input">
+                        <button type="submit" class="btn">Update</button>
+                    </form>
+                </td>
+                <td data-label="Total">${{ "%.2f"|format(item.total) }}</td>
+                <td data-label="Actions">
+                    <a href="{{ url_for('cart.remove_from_cart', product_id=item.product.id) }}" class="cart-remove-btn">Remove</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="cart-total">Total: ${{ "%.2f"|format(total) }}</p>
+
+    <div class="cart-actions">
+        <a href="{{ url_for('cart.clear_cart') }}" class="btn">Clear Cart</a>
+        <a href="{{ url_for('orders.create_checkout_session') }}" class="btn">Proceed to Checkout</a>
+    </div>
+{% else %}
+    <p>Your cart is empty.</p>
+{% endif %}
+
+<a href="{{ url_for('main.product_list') }}" class="btn">Continue Shopping</a>
+{% endblock %}

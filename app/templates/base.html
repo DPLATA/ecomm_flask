@@ -3,20 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Our Label Shop{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>{% block title %}Your E-commerce Store{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
     <header>
-        <nav>
-            <div class="container">
-                <div class="logo">Our Label Shop</div>
-                <button class="burger-menu" id="burgerMenu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                <ul class="nav-links">
+        <div class="container">
+            <nav>
+                <ul>
                     <li><a href="{{ url_for('main.index') }}">Home</a></li>
                     <li><a href="{{ url_for('main.product_list') }}">Products</a></li>
                     {% if 'user_id' in session %}
@@ -26,19 +21,20 @@
                         <li><a href="{{ url_for('auth.login') }}">Login</a></li>
                         <li><a href="{{ url_for('auth.register') }}">Register</a></li>
                     {% endif %}
+                    <li><a href="{{ url_for('cart.view_cart') }}">Cart ({{ session['cart']|cart_count }})</a></li>
                 </ul>
-            </div>
-        </nav>
+            </nav>
+        </div>
     </header>
 
     <main class="container">
         {% with messages = get_flashed_messages() %}
             {% if messages %}
-                <div class="flash-messages">
+                <ul class="flashes">
                     {% for message in messages %}
-                        <div class="flash-message">{{ message }}</div>
+                        <li>{{ message }}</li>
                     {% endfor %}
-                </div>
+                </ul>
             {% endif %}
         {% endwith %}
 
@@ -47,16 +43,8 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2024 Our Label Shop. All rights reserved.</p>
-            <ul>
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">Contact</a></li>
-                <li><a href="#">Terms of Service</a></li>
-                <li><a href="#">Privacy Policy</a></li>
-            </ul>
+            <p>&copy; 2024 Your E-commerce Store. All rights reserved.</p>
         </div>
     </footer>
-
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

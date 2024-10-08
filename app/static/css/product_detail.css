@@ -1,0 +1,27 @@
+/* product_detail.css */
+.product-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.product-image-container {
+  width: 50%;
+}
+
+.product-image {
+  max-width: 100%;
+  height: auto;
+}
+
+.product-info {
+  width: 45%;
+}
+
+.product-description {
+  margin: 20px 0;
+}
+
+.add-to-cart-form {
+  margin-top: 20px;
+}

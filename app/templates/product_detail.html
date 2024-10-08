@@ -1,15 +1,24 @@
 {% extends "base.html" %}
-
-{% block title %}{{ product.name }}{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_detail.css') }}">
+{% endblock %}
 
 {% block content %}
 <div class="product-detail">
+    <div class="product-image-container">
+        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+    </div>
     <div class="product-info">
-        <h1>{{ product.name }}</h1>
-        <p>{{ product.description }}</p>
-        <p class="price">${{ "%.2f"|format(product.price) }}</p>
-        <p>Category: {{ product.category_name }}</p>
-        <a href="{{ url_for('main.shipping', product_id=product.id) }}" class="cta-button">Buy Now</a>
+        <h1 class="product-name">{{ product.name }}</h1>
+        <p class="product-price">${{ "%.2f"|format(product.price) }}</p>
+        <p class="product-description">{{ product.description }}</p>
+        <form action="{{ url_for('cart.add_to_cart', product_id=product.id) }}" method="post" class="add-to-cart-form">
+            <div class="quantity-input">
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" value="1" min="1" required>
+            </div>
+            <button type="submit" class="btn">Add to Cart</button>
+        </form>
     </div>
 </div>
 {% endblock %}

@@ -9,26 +9,21 @@ from app.blueprints.auth.routes import login_required
 @bp.route('/create-checkout-session', methods=['GET'])
 @login_required
 def create_checkout_session():
-    product_id = session.get('product_id')
-    if not product_id:
-        return redirect(url_for('main.product_list'))
+    cart = session.get('cart', {})
+    if not cart:
+        flash('Your cart is empty.')
+        return redirect(url_for('cart.view_cart'))
 
     connection = get_db_connection()
     if connection:
         try:
             cursor = connection.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM products WHERE id = %s", (product_id,))
-            product = cursor.fetchone()
-            cursor.close()
-            connection.close()
-
-            if not product:
-                return redirect(url_for('main.product_list'))
-
-            checkout_session = stripe.checkout.Session.create(
-                payment_method_types=['card'],
-                line_items=[
-                    {
+            line_items = []
+            for product_id, quantity in cart.items():
+                cursor.execute("SELECT * FROM products WHERE id = %s", (product_id,))
+                product = cursor.fetchone()
+                if product:
+                    line_items.append({
                         'price_data': {
                             'currency': 'usd',
                             'unit_amount': int(float(product['price']) * 100),
@@ -37,12 +32,21 @@ def create_checkout_session():
                                 'description': product['description'],
                             },
                         },
-                        'quantity': 1,
-                    },
-                ],
+                        'quantity': quantity,
+                    })
+            cursor.close()
+            connection.close()
+
+            if not line_items:
+                flash('No valid items in cart.')
+                return redirect(url_for('cart.view_cart'))
+
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=line_items,
                 mode='payment',
                 success_url=url_for('orders.success', _external=True),
-                cancel_url=url_for('main.product_detail', product_id=product_id, _external=True),
+                cancel_url=url_for('cart.view_cart', _external=True),
             )
             return redirect(checkout_session.url, code=303)
         except Error as e:
@@ -52,48 +56,55 @@ def create_checkout_session():
         return "Database connection failed", 500
 
 @bp.route('/success')
+@login_required
 def success():
     order_number = generate_order_number()
-    product_id = session.get('product_id')
     user_id = session.get('user_id')
+    cart = session.get('cart', {})
 
-    if not user_id:
-        flash('You must be logged in to complete an order.')
-        return redirect(url_for('auth.login'))
+    if not cart:
+        flash('Your cart is empty.')
+        return redirect(url_for('main.index'))
 
     connection = get_db_connection()
     if connection:
         try:
             cursor = connection.cursor(dictionary=True)
 
-            # Get the product
-            cursor.execute("SELECT * FROM products WHERE id = %s", (product_id,))
-            product = cursor.fetchone()
-
-            if not product:
-                return "Product not found", 404
+            # Calculate total price
+            total_price = 0
+            for product_id, quantity in cart.items():
+                cursor.execute("SELECT price FROM products WHERE id = %s", (product_id,))
+                product = cursor.fetchone()
+                if product:
+                    total_price += float(product['price']) * quantity
 
             # Create a new order
             cursor.execute("""
                 INSERT INTO orders (user_id, status, total_price)
                 VALUES (%s, %s, %s)
-            """, (user_id, 'Completed', product['price']))
+            """, (user_id, 'Completed', total_price))
             order_id = cursor.lastrowid
 
-            # Add order item
-            cursor.execute("""
-                INSERT INTO order_items (order_id, product_id, quantity, price)
-                VALUES (%s, %s, %s, %s)
-            """, (order_id, product['id'], 1, product['price']))
+            # Add order items
+            for product_id, quantity in cart.items():
+                cursor.execute("SELECT price FROM products WHERE id = %s", (product_id,))
+                product = cursor.fetchone()
+                if product:
+                    cursor.execute("""
+                        INSERT INTO order_items (order_id, product_id, quantity, price)
+                        VALUES (%s, %s, %s, %s)
+                    """, (order_id, product_id, quantity, product['price']))
 
             connection.commit()
             cursor.close()
             connection.close()
 
-            # Clear session data
-            session.pop('product_id', None)
+            # Clear cart
+            session.pop('cart', None)
 
-            return render_template('order_details.html', order_number=order_number, product=product)
+            flash('Order placed successfully!')
+            return render_template('order_success.html', order_number=order_number)
         except Error as e:
             print(f"Error: {e}")
             return "An error occurred", 500

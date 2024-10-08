@@ -1,18 +1,17 @@
 {% extends "base.html" %}
-
-{% block title %}Our Products{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_list.css') }}">
+{% endblock %}
 
 {% block content %}
-<h1 class="text-center mb-2">Our Products</h1>
-
+<h1>Our Products</h1>
 <div class="product-list">
     {% for product in products %}
     <div class="product-item">
-        <h2>{{ product.name }}</h2>
-        <p>{{ product.description }}</p>
-        <p class="price">${{ "%.2f"|format(product.price) }}</p>
-        <p>Category: {{ product.category_name }}</p>
-        <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="cta-button">View Details</a>
+        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+        <h2 class="product-name">{{ product.name }}</h2>
+        <p class="product-price">${{ "%.2f"|format(product.price) }}</p>
+        <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn">View Details</a>
     </div>
     {% endfor %}
 </div>

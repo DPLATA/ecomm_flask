@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="order-success">
+    <h1>Order Placed Successfully!</h1>
+    <p>Thank you for your purchase. Your order has been received and is being processed.</p>
+    <p>Order Number: <strong>{{ order_number }}</strong></p>
+    <p>We'll send you an email confirmation with order details and tracking information once your order has been shipped.</p>
+    <a href="{{ url_for('main.product_list') }}" class="btn">Continue Shopping</a>
+</div>
+{% endblock %}

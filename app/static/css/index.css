@@ -1,0 +1,27 @@
+/* product_list.css */
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.product-item {
+  border: 1px solid #eee;
+  padding: 20px;
+  text-align: center;
+}
+
+.product-item img {
+  max-width: 100%;
+  height: auto;
+}
+
+.product-name {
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.product-price {
+  color: #666;
+  margin-bottom: 10px;
+}

@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
 
 {% block title %}Welcome to Our Label Shop{% endblock %}
 
@@ -11,17 +14,17 @@
     </div>
 </section>
 
-<section class="product-gallery">
-    <div class="container">
-        <h2 class="text-center mb-2">Our Products</h2>
-        <div class="gallery-container">
-            {% for category in categories %}
-            <div class="product-category">
-                <h3>{{ category.name }}</h3>
-                <a href="{{ url_for('main.product_list', category_id=category.id) }}" class="cta-button">View Products</a>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
+{#<section class="product-gallery">#}
+{#    <div class="container">#}
+{#        <h2 class="text-center mb-2">Our Products</h2>#}
+{#        <div class="gallery-container">#}
+{#            {% for category in categories %}#}
+{#            <div class="product-category">#}
+{#                <h3>{{ category.name }}</h3>#}
+{#                <a href="{{ url_for('main.product_list', category_id=category.id) }}" class="cta-button">View Products</a>#}
+{#            </div>#}
+{#            {% endfor %}#}
+{#        </div>#}
+{#    </div>#}
+{#</section>#}
 {% endblock %}

@@ -1,0 +1,21 @@
+/* dashboard.css */
+.dashboard h1 {
+  margin-bottom: 30px;
+}
+
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.order-table th,
+.order-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.no-orders {
+  text-align: center;
+  margin-top: 30px;
+}
